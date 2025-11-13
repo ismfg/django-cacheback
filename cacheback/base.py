@@ -29,7 +29,7 @@ def to_bytestring(value):
     :returns: a bytestring
     """
     if isinstance(value, DjangoModel):
-        return ('%s:%s' % (value.__class__, hash(value))).encode('utf-8')
+        return ('{}:{}'.format(value.__class__, hash(value))).encode('utf-8')
     if isinstance(value, str):
         return value.encode('utf8')
     if isinstance(value, bytes):
@@ -37,7 +37,7 @@ def to_bytestring(value):
     return bytes(str(value), 'utf8')
 
 
-class Job(object):
+class Job:
     """
     A cached read job.
 
@@ -91,7 +91,7 @@ class Job(object):
 
     @property
     def class_path(self):
-        return '%s.%s' % (self.__module__, self.__class__.__name__)
+        return '{}.{}'.format(self.__module__, self.__class__.__name__)
 
     def __init__(self):
         self.cache_alias = self.cache_alias or getattr(
@@ -399,11 +399,11 @@ class Job(object):
             return self.class_path
         try:
             if args and not kwargs:
-                return "%s:%s" % (self.class_path, self.hash(args))
+                return "{}:{}".format(self.class_path, self.hash(args))
             # The line might break if your passed values are un-hashable.  If
             # it does, you need to override this method and implement your own
             # key algorithm.
-            return "%s:%s:%s:%s" % (
+            return "{}:{}:{}:{}".format(
                 self.class_path,
                 self.hash(args),
                 self.hash([k for k in sorted(kwargs)]),
